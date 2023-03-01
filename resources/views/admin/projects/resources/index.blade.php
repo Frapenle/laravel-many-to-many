@@ -90,6 +90,8 @@
                             <i class="fas fa-sort fa-xs"></i>
                             @endif
                         </a></th>
+                        <th>Technologies</th>
+
                         <th scope="col"><a class="text-primary text-decoration-none" href="{{route('admin.projects.index', ['sort' => 'license', 'direction' => $direction == 'asc' ? 'desc' : 'asc'])}}">License 
                             @if ($sort == 'license')
                                 @if ($direction === 'asc')
@@ -159,6 +161,13 @@
                                 <td style="min-width: 100px"> {{$project->name}} </td>
                                 <td class="text-truncate" style="max-width: 200px"> {{$project->description}} </td>
                                 <td style="max-width: 200px"> {{$project->authors}} </td>
+                                <td> 
+                                    @forelse ($project->technologies as $technology)
+                                    {{$technology->name}}
+                                    @empty
+                                        Empty
+                                    @endforelse
+                                </td>
                                 <td> {{$project->license}} </td>
                                 <td> {{$project->program_lang}} </td>
                                 <td> {{$project->frameworks}} </td>

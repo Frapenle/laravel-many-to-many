@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Project;
+use App\Models\Technology;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
@@ -24,7 +25,8 @@ class ProjectController extends Controller
         'license' => ['min:2', 'max:255', 'nullable'],
         'program_lang' => ['min: 2', 'max: 100', 'nullable'],
         'frameworks' => ['min: 2', 'max: 100', 'nullable'],
-        'github_url' => ['max: 255', 'url', 'nullable']
+        'github_url' => ['max: 255', 'url', 'nullable'],
+        'type_id' => ['required', 'exists:types,id']
     ];
     /**
      * Display a listing of the resource.
@@ -55,7 +57,7 @@ class ProjectController extends Controller
      */
     public function create(Project $project)
     {
-        return view('admin.projects.resources.create', compact('project'));
+        return view('admin.projects.resources.create', compact('project'), ['technologies' => Technology::all()]);
     }
 
     /**
@@ -106,7 +108,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        return view('admin.projects.resources.edit', compact('project'));
+        return view('admin.projects.resources.edit', compact('project'), ['technologies' => Technology::all()]);
     }
 
     /**
