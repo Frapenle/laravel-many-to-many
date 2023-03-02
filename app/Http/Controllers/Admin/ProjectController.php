@@ -26,7 +26,8 @@ class ProjectController extends Controller
         'program_lang' => ['min: 2', 'max: 100', 'nullable'],
         'frameworks' => ['min: 2', 'max: 100', 'nullable'],
         'github_url' => ['max: 255', 'url', 'nullable'],
-        'type_id' => ['required', 'exists:types,id']
+        'type_id' => ['nullable', 'exists:types,id'],
+        'technologies' => ['exists:technologies,id']
     ];
     /**
      * Display a listing of the resource.
@@ -43,7 +44,7 @@ class ProjectController extends Controller
         $projects = Project::query()
             ->when($sort, function ($query) use ($sort, $direction) {
                 $query->orderBy($sort, $direction);
-            })->get();
+            })->paginate(5);
 
         $trashed = Project::onlyTrashed()->count();
         return view('admin.projects.resources.index', compact('projects', 'trashed', 'sort', 'direction'));
@@ -131,10 +132,10 @@ class ProjectController extends Controller
         //richiedo validazione con le nuove regole
         $request->validate($newRules);
         //cancellazione file dal db se viene cambiata l'immagine
-        if ($request->hasFile('preview')) {
-            Storage::delete($project->preview);
-            $data['preview'] =  Storage::put('img/uploads', $data['preview']);
-        };
+        // if ($request->hasFile('preview')) {
+        //     Storage::delete($project->preview);
+        //     $data['preview'] =  Storage::put('img/uploads', $data['preview']);
+        // };
         $project->update($data);
         $message = "{$project->name} è stato modificato";
         return redirect()->route('admin.projects.index')->with('message', $message)->with('alert-type', 'alert-success');
