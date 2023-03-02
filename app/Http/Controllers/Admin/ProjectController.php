@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\Technology;
+use App\Models\Type;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
@@ -27,7 +28,7 @@ class ProjectController extends Controller
         'frameworks' => ['min: 2', 'max: 100', 'nullable'],
         'github_url' => ['max: 255', 'url', 'nullable'],
         'type_id' => ['nullable', 'exists:types,id'],
-        'technologies' => ['exists:technologies,id']
+        'technologies' => ['array', 'exists:technologies,id']
     ];
     /**
      * Display a listing of the resource.
@@ -58,7 +59,7 @@ class ProjectController extends Controller
      */
     public function create(Project $project)
     {
-        return view('admin.projects.resources.create', compact('project'), ['technologies' => Technology::all()]);
+        return view('admin.projects.resources.create', compact('project'), ['technologies' => Technology::all(), 'types' => Type::all()]);
     }
 
     /**
@@ -69,14 +70,12 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-
-
         // variable request all
         $data = $request->all();
+        // dd($data);
 
         // request validation rules -> top of the page
-        $request->validate($this->rules);
-
+        $data = $request->validate($this->rules);
         //create new project
         $newProject = new Project();
         $newProject->fill($data);
@@ -87,6 +86,7 @@ class ProjectController extends Controller
             $newProject->preview = 'img/placeholder-300x300';
         }
         $newProject->save();
+        $newProject->technologies()->sync($data['technologies']);
         return redirect()->route('admin.projects.index');
     }
 
@@ -109,7 +109,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        return view('admin.projects.resources.edit', compact('project'), ['technologies' => Technology::all()]);
+        return view('admin.projects.resources.edit', compact('project'), ['technologies' => Technology::all(), 'types' => Type::all()]);
     }
 
     /**
@@ -126,6 +126,8 @@ class ProjectController extends Controller
         App::setLocale('it');
         //salvo tutti i dati nella variabile data
         $data = $request->all();
+        // dd($data);
+
         //creo nuova regola per i campi unique della validation aggiungendola a quelle gia esistenti
         $newRules = $this->rules;
         $newRules['name'] = ['required', Rule::unique('projects')->ignore($project->id), 'max: 25'];
@@ -137,6 +139,8 @@ class ProjectController extends Controller
         //     $data['preview'] =  Storage::put('img/uploads', $data['preview']);
         // };
         $project->update($data);
+        $project->technologies()->sync($data['technologies']);
+
         $message = "{$project->name} è stato modificato";
         return redirect()->route('admin.projects.index')->with('message', $message)->with('alert-type', 'alert-success');
     }

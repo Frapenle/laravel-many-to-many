@@ -2,11 +2,27 @@
 <form id="{{$idForm}}" action="{{route($route, $project->id)}}" method="POST" class="mb-3" name={{$idForm}} enctype="multipart/form-data">
 @csrf
 @method($method)
+        <select  class="form-control" id="project_type" name="type_id" >
+            @foreach ($types as $type)
+                <option value="{{$type->id}}"
+                    {{ old('type_id', $type->type_id) ==  $type->id ? 'selected' : '' }}>
+                    <span >
+                        {{ $type->name }}
+                    </span>
+                </option>
+            @endforeach
+        </select>
 
     <div class="d-flex gap-3">    
         @foreach ($technologies as $technology)
             <div>
-                <input class="form-check-input" type="checkbox" value="{{$technology->id}}" id="" name="technology[]">
+                <input class="form-check-input" type="checkbox" value="{{$technology->id}}" id="" name="technologies[]" 
+                @if ($errors->any())
+                    @checked(in_array($technology->id, old('technologies',[])))
+                @else
+                    @checked($project->technologies->contains($technology->id))
+                @endif>
+
                 <label class="form-check-label" for="">
                     {{$technology->name}}
                 </label>
