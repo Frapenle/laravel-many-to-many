@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Project;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Type;
+use App\Models\Technology;
 
 class ProjectsTableSeeder extends Seeder
 {

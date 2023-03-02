@@ -193,6 +193,9 @@
                         @endforelse
                     </tbody>
                 </table>
+                    <div class="">
+                        <div class=""><a class="page-link" href="#">{{ $projects->appends(['sort' => request('sort')])->links()}}</a></div>
+                    </div>
             </div>
         </div>
     </div>

@@ -3,14 +3,16 @@
 @csrf
 @method($method)
 
-    @foreach ($technologies as $technology)
-        <div class="form-check">
-            <label class="form-check-label" for="">
-                {{$technology->name}}
-            </label>
-            <input class="form-check-input" type="checkbox" value="{{$technology->id}}" id="" name="technology[]">
+    <div class="d-flex gap-3">    
+        @foreach ($technologies as $technology)
+            <div>
+                <input class="form-check-input" type="checkbox" value="{{$technology->id}}" id="" name="technology[]">
+                <label class="form-check-label" for="">
+                    {{$technology->name}}
+                </label>
+            </div>
+        @endforeach
         </div>
-    @endforeach
     
     <div class="d-flex gap-2 w-100">
         <div class="mb-4 w-50">
